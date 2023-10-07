@@ -1,0 +1,206 @@
+Following are the Questions:-
+
+1) Write a query in SQL to find all the information of the nurses who are yet to be registered. 
+- SELECT * FROM NURSE
+WHERE REGISTERED='f';
+
+
+2) Write a query in SQL to find the name of the nurse who are the head of their department.
+-SELECT NAME FROM NURSE
+WHERE POSITION='Head Nurse';
+
+
+3) Write a query in SQL to obtain the name of the physicians who are the head of each department.
+-SELECT P.NAME FROM PHYSICIAN P JOIN DEPARTMENT D
+ON P.EMPLOYEEID=D.HEAD;
+
+
+4)Write a query in SQL to count the number of patients who taken appointment with at least one physician.
+-SELECT COUNT(DISTINCT(PATIENT))FROM APPOINTMENT;
+
+
+5)Write a query in SQL to find the floor and block where the room number 212 belongs to.
+-SELECT BLOCKFLOOR,BLOCKCODE FROM ROOM
+WHERE ROOMNUMBER=212;
+
+
+6)Write a query in SQL to count the number available rooms.
+-SELECT BLOCKFLOOR,BLOCKCODE FROM ROOM
+WHERE ROOMNUMBER=212;
+
+
+7)Write a query in SQL to count the number of unavailable rooms.
+-SELECT COUNT(ROOMNUMBER) FROM ROOM
+WHERE UNAVAILABLE='t';
+
+
+8)Write a query in SQL to obtain the name of the physician and the departments they are affiliated with.
+-SELECT P.NAME,A.DEPARTMENT FROM PHYSICIAN P JOIN AFFILIATED_WITH A
+ON P.EMPLOYEEID=A.PHYSICIAN
+WHERE PRIMARYAFFILIATION='t';
+
+
+9)Write a query in SQL to obtain the name of the physicians who are trained for a special treatement.
+-SELECT DISTINCT(P.NAME) FROM PHYSICIAN P JOIN TRAINED_IN T
+ON P.EMPLOYEEID=T.PHYSICIAN;
+
+
+10)Write a query in SQL to obtain the name of the physicians with department who are yet to be affiliated.
+-SELECT P.NAME,A.DEPARTMENT FROM PHYSICIAN P JOIN AFFILIATED_WITH A
+ON P.EMPLOYEEID=A.PHYSICIAN
+WHERE PRIMARYAFFILIATION='f';
+
+
+11)Write a query in SQL to obtain the name of the physicians who are not a specialized physician.
+- SELECT NAME FROM PHYSICIAN P
+WHERE NOT EXISTS(SELECT PHYSICIAN  FROM TRAINED_IN T
+WHERE P.EMPLOYEEID=T.PHYSICIAN);
+
+
+12)Write a query in SQL to obtain the name of the patients with their physicians by whom they got their preliminary treatement. 
+-SELECT PT.NAME AS PATIENT_NAME,PH.NAME AS PHYSICIAN_NAME 
+FROM PHYSICIAN PH JOIN PATIENT PT
+ON PH.EMPLOYEEID=PT.PCP;
+
+
+13)Write a query in SQL to find the name of the patients and the number of physicians they have taken appointment.
+-SELECT PT.NAME,COUNT(A.PHYSICIAN) FROM PATIENT PT JOIN APPOINTMENT A
+ON PT.SSN=A.PATIENT
+GROUP BY PT.NAME;
+
+
+14)Write a query in SQL to count number of unique patients who got an appointment for examination room C. 
+-SELECT DISTINCT(COUNT(EXAMINATIONROOM))FROM APPOINTMENT
+WHERE EXAMINATIONROOM='C';
+
+
+15)Write a query in SQL to find the name of the patients and the number of the room where they have to go for their treatment. 
+-SELECT PT.NAME,A.EXAMINATIONROOM FROM PATIENT PT JOIN APPOINTMENT A
+ON PT.SSN=A.PATIENT;
+
+
+16)Write a query in SQL to find the name of the nurses and the room scheduled, where they will assist the physicians.
+-SELECT N.NAME,A.EXAMINATIONROOM FROM NURSE N JOIN APPOINTMENT A
+ON A.PREPNURSE=N.EMPLOYEEID;
+
+
+17)Write a query in SQL to find the name of the patients who taken the appointment on the 25th of April at 10 am, and also display their physician, assisting nurses and room no.
+-SELECT PT.NAME AS PATIENT,P.NAME AS PHYSICIAN,N.NAME AS NURSE,A.EXAMINATIONROOM FROM PATIENT PT JOIN APPOINTMENT A
+ON A.PATIENT=PT.SSN
+JOIN PHYSICIAN P
+ON P.EMPLOYEEID=A.PHYSICIAN
+JOIN NURSE N
+ON A.PREPNURSE=N.EMPLOYEEID
+WHERE START_DT='25/4/2008';
+
+
+18)Write a query in SQL to find the name of patients and their physicians who does not require any assistance of a nurse.
+-SELECT PT.NAME AS PATIENT,P.NAME AS PHYSICIAN FROM PATIENT PT JOIN APPOINTMENT A
+ON A.PATIENT=PT.SSN
+JOIN PHYSICIAN P
+ON P.EMPLOYEEID=A.PHYSICIAN
+WHERE PREPNURSE is null;
+
+
+19)Write a query in SQL to find the name of the patients, their treating physicians and medication
+-) SELECT PT.NAME,P.NAME AS PHYSICIAN,M.NAME AS MEDICATION FROM PATIENT PT JOIN PHYSICIAN P
+ON PT.PCP=P.EMPLOYEEID
+JOIN PRESCRIBES PRE
+ON PRE.PATIENT=PT.SSN
+JOIN MEDICATION M
+ON M.CODE=PRE.MEDICATION;
+
+
+20)Write a query in SQL to find the name of the patients who taken an advanced appointment, and also display their physicians and medication.
+-SELECT PT.NAME,P.NAME AS PHYSICIAN,M.NAME AS MEDICATION FROM PATIENT PT JOIN PHYSICIAN P
+ON PT.PCP=P.EMPLOYEEID
+JOIN PRESCRIBES PRES
+ON PRES.PATIENT=PT.SSN
+JOIN MEDICATION M
+ON PRES.MEDICATION=M.CODE
+WHERE PRES.APPOINTMENT IS NOT NULL;
+
+21)Write a query in SQL to find the name and medication for those patients who did not take any appointment.
+-SELECT PT.NAME,P.NAME AS PHYSICIAN,M.NAME AS MEDICATION FROM PATIENT PT JOIN PHYSICIAN P
+ON PT.PCP=P.EMPLOYEEID
+JOIN PRESCRIBES PRES
+ON PRES.PATIENT=PT.SSN
+JOIN MEDICATION M
+ON PRES.MEDICATION=M.CODE
+WHERE PRES.APPOINTMENT IS NULL;
+
+
+22)Write a query in SQL to count the number of available rooms in each block.  
+-SELECT BLOCKCODE,COUNT(ROOMNUMBER) FROM ROOM
+WHERE UNAVAILABLE='t'
+GROUP BY BLOCKCODE;
+
+
+23)Write a query in SQL to count the number of available rooms in each floor.
+-SELECT BLOCKFLOOR,COUNT(ROOMNUMBER) FROM ROOM
+WHERE UNAVAILABLE='t'
+GROUP BY BLOCKFLOOR;
+
+
+24)Write a query in SQL to count the number of available rooms for each block in each floor. 
+-SELECT BLOCKFLOOR,BLOCKCODE,COUNT(*) FROM ROOM
+WHERE UNAVAILABLE='t'
+GROUP BY BLOCKCODE,BLOCKFLOOR
+ORDER BY BLOCKFLOOR,BLOCKCODE;
+
+
+25)Write a query in SQL to count the number of unavailable rooms for each block in each floor. 
+-SELECT BLOCKFLOOR,BLOCKCODE,COUNT(*) FROM ROOM
+WHERE UNAVAILABLE='f'
+GROUP BY BLOCKCODE,BLOCKFLOOR
+ORDER BY BLOCKFLOOR,BLOCKCODE;
+
+
+26)Write a query in SQL to find out the floor where the maximum no of rooms are available. 
+- SELECT BLOCKFLOOR,COUNT(ROOMNUMBER) FROM ROOM
+WHERE UNAVAILABLE='f'
+GROUP BY BLOCKFLOOR
+HAVING  COUNT(ROOMNUMBER) IN(SELECT MAX(COUNT(ROOMNUMBER))FROM ROOM WHERE UNAVAILABLE='f' GROUP BY BLOCKFLOOR);
+
+
+27)Write a query in SQL to find out the floor where the minimum no of rooms are available
+-SELECT BLOCKFLOOR,COUNT(ROOMNUMBER) FROM ROOM
+WHERE UNAVAILABLE='f'
+GROUP BY BLOCKFLOOR
+HAVING  COUNT(ROOMNUMBER) IN(SELECT MIN(COUNT(ROOMNUMBER))FROM ROOM WHERE UNAVAILABLE='f' GROUP BY BLOCKFLOOR);
+
+
+28)Write a query in SQL to obtain the name of the patients, their block, floor, and room number where they are admitted. 
+-SELECT PT.NAME,R.ROOMNUMBER,R.BLOCKFLOOR,R.BLOCKCODE FROM PATIENT PT JOIN STAY S
+ON PT.SSN=S.PATIENT
+JOIN ROOM R
+ON R.ROOMNUMBER=S.ROOM;
+
+
+29)Write a query in SQL to obtain the nurses and the block where they are booked for attending the patients on call.
+-SELECT N.NAME,O.BLOCKCODE FROM NURSE N JOIN ON_CALL O
+ON N.EMPLOYEEID=O.NURSE;
+
+
+30)Write a query in SQL to make a report which will show -
+a) name of the patient,
+b) name of the physician who is treating him or her,
+c) name of the nurse who is attending him or her,
+d) which treatement is going on to the patient,
+e) the date of release,
+f) in which room the patient has admitted and which floor and block the room belongs to respectively.  
+- SELECT PT.NAME AS PATIENT,P.NAME AS PHYSICIAN,N.NAME AS NURSE ,PRO.NAME AS TREATMENT,R.BLOCKFLOOR AS FLOOR,R.BLOCKCODE,R.ROOMNUMBER FROM PATIENT PT LEFT OUTER JOIN UNDERGOES U
+ON U.PATIENT=PT.SSN
+JOIN PHYSICIAN P
+ON P.EMPLOYEEID=U.PHYSICIAN
+JOIN NURSE N
+ON N.EMPLOYEEID=U.ASSISTINGNURSE
+JOIN PROCEDURE PRO
+ON PRO.CODE=U.PROCEDURE
+JOIN STAY S
+ON U.STAY=S.STAYID
+JOIN ROOM R
+ON R.ROOMNUMBER=S.ROOM;
+
+
+
